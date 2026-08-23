@@ -10,11 +10,13 @@ on:
       youtube_key:
         description: 'YouTube Stream Key'
         required: true
+        default: 'p0ky-h9m9-cywd-wy8v-2yra'
       restream_key:
         description: 'Restream Key'
         required: false
+        default: 're_12215822_event12d2d60d5f814c68b3c0f0137cacab10'
       destination:
-        description: 'Stream Destination'
+        description: 'Stream Destination (youtube, restream, both)'
         required: true
         default: 'both'
       quality:
