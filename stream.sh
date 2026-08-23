@@ -27,29 +27,42 @@ if [ -z "$KICK_M3U8" ]; then
   exit 0
 fi
 
-# تحديد مسار البث للمنصات
+echo "جاري بدء البث بأعلى جودة وتجاوز قيود الترويسة..."
+
+# تشغيل البث بناءً على الاختيار مع ضبط التوافقية لمنع أي خطأ في الترويسة
 if [ "$DEST" == "youtube" ]; then
-    OUTPUT="[f=flv]rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_KEY"
+    ffmpeg -fflags +genpts -re -i "$KICK_M3U8" \
+      -map 0:v -map 0:a \
+      -c:v copy -c:a copy \
+      -flvflags no_duration_filesize \
+      -f flv "rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_KEY" &
+
 elif [ "$DEST" == "restream" ]; then
-    OUTPUT="[f=flv]rtmp://live.restream.io/live/$RESTREAM_KEY"
+    ffmpeg -fflags +genpts -re -i "$KICK_M3U8" \
+      -map 0:v -map 0:a \
+      -c:v copy -c:a copy \
+      -flvflags no_duration_filesize \
+      -f flv "rtmp://live.restream.io/live/$RESTREAM_KEY" &
+
 else
-    OUTPUT="[f=flv]rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_KEY|[f=flv]rtmp://live.restream.io/live/$RESTREAM_KEY"
+    # البث للمنصتين معاً بشكل مستقل وثابت 100%
+    ffmpeg -fflags +genpts -re -i "$KICK_M3U8" \
+      -map 0:v -map 0:a \
+      -c:v copy -c:a copy \
+      -flvflags no_duration_filesize \
+      -f flv "rtmp://a.rtmp.youtube.com/live2/$YOUTUBE_KEY" &
+      
+    ffmpeg -fflags +genpts -re -i "$KICK_M3U8" \
+      -map 0:v -map 0:a \
+      -c:v copy -c:a copy \
+      -flvflags no_duration_filesize \
+      -f flv "rtmp://live.restream.io/live/$RESTREAM_KEY" &
 fi
 
-echo "جاري تشغيل FFmpeg وتوجيه البث بأعلى جودة بدون تقطيع..."
-
-# إضافة -map بشكل صريح لربط الفيديو والصوت مع مخرج التوزيع tee
-ffmpeg -re -i "$KICK_M3U8" \
-  -map 0:v -map 0:a \
-  -c:v copy -c:a copy \
-  -f tee "$OUTPUT" &
-
-FFMPEG_PID=$!
-
-# ضبط مؤقت لإنهاء البث بسلاسة قبل انتهاء الـ 6 ساعات (5 ساعات و 45 دقيقة)
+# الانتظار لمدة 5 ساعات و 45 دقيقة لتفادي إغلاق GitHub Actions (حد الـ 6 ساعات)
 sleep 20700
 
-echo "انتهت الدورة الحالية، جاري إيقاف FFmpeg وبدء دورة جديدة فوراً..."
-kill $FFMPEG_PID
+echo "انتهت الدورة الحالية، جاري إيقاف العمليات وتجديد السيرفر للبث 24/7..."
+killall ffmpeg
 
 gh workflow run main.yml -f destination="$DEST" -f quality="$QUALITY"
