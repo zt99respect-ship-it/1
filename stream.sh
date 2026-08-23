@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # ==========================================
-# الإعدادات المحسنة لضمان أعلى جودة واستقرار
+# الإعدادات المحدثة (قناة W1pey)
 # ==========================================
 KICK_CHANNEL="${KICK_CHANNEL:-W1pey}"
-YOUTUBE_KEY="${YOUTUBE_KEY:-p0ky-h9m9-cywd-wy8v-2yra}"
+YOUTUBE_KEY="${YOUTUBE_KEY:-}"
 RESTREAM_KEY="${RESTREAM_KEY:-re_12215822_event12d2d60d5f814c68b3c0f0137cacab10}"
 QUALITY="${STREAM_QUALITY:-best}"
 DEST="${STREAM_DEST:-both}"
@@ -25,7 +25,7 @@ fi
 
 echo "تم الحصول على رابط البث بنجاح، جاري بدء الإرسال..."
 
-# تشغيل البث مع ضبط الخيارات لمنع هبوط الفريمات أو التقطيع
+# تشغيل البث بناءً على المنصة المستهدفة
 if [ "$DEST" == "youtube" ]; then
     ffmpeg -fflags +genpts+nobuffer -re -i "$KICK_M3U8" \
       -map 0:v -map 0:a \
