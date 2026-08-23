@@ -1,0 +1,43 @@
+name: 24/7 Kick to YT & Restream Broadcast
+
+on:
+  workflow_dispatch:
+    inputs:
+      kick_channel:
+        description: 'Kick Channel Name'
+        required: true
+      youtube_key:
+        description: 'YouTube Stream Key'
+        required: true
+      restream_key:
+        description: 'Restream Key'
+        required: true
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  broadcaster:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: جلب ملفات المستودع
+        uses: actions/checkout@v3
+
+      - name: تثبيت FFmpeg و Streamlink
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          pip3 install streamlink
+
+      - name: تشغيل سكربت البث المباشر
+        env:
+          KICK_CHANNEL: ${{ github.event.inputs.kick_channel }}
+          YOUTUBE_KEY: ${{ github.event.inputs.youtube_key }}
+          RESTREAM_KEY: ${{ github.event.inputs.restream_key }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x stream.sh
+          ./stream.sh
+
