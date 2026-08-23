@@ -3,23 +3,28 @@ name: 24/7 Master Broadcast
 on:
   workflow_dispatch:
     inputs:
-      destination:
-        description: 'Target Platform (both, youtube, restream)'
+      kick_channel:
+        description: 'Kick Channel Name'
+        required: true
+        default: 'klash'
+      youtube_key:
+        description: 'YouTube Stream Key'
+        required: true
+      restream_key:
+        description: 'Restream Key'
         required: false
+      destination:
+        description: 'Stream Destination'
+        required: true
         default: 'both'
       quality:
         description: 'Stream Quality'
-        required: false
+        required: true
         default: 'best'
-
-permissions:
-  actions: write
-  contents: read
 
 jobs:
   broadcaster:
     runs-on: ubuntu-latest
-
     steps:
       - name: جلب ملفات المستودع
         uses: actions/checkout@v3
@@ -27,14 +32,16 @@ jobs:
       - name: تثبيت FFmpeg و Streamlink
         run: |
           sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          pip3 install streamlink
+          sudo apt-get install -y ffmpeg python3-pip
+          sudo pip3 install --upgrade streamlink
 
       - name: تشغيل سكربت البث الشامل
         env:
-          STREAM_DEST: ${{ github.event.inputs.destination || 'both' }}
-          STREAM_QUALITY: ${{ github.event.inputs.quality || 'best' }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KICK_CHANNEL: ${{ github.event.inputs.kick_channel }}
+          YOUTUBE_KEY: ${{ github.event.inputs.youtube_key }}
+          RESTREAM_KEY: ${{ github.event.inputs.restream_key }}
+          STREAM_DEST: ${{ github.event.inputs.destination }}
+          STREAM_QUALITY: ${{ github.event.inputs.quality }}
         run: |
           chmod +x stream.sh
           ./stream.sh
