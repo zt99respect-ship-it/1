@@ -3,7 +3,7 @@
 # ==========================================
 # الإعدادات المحسنة لضمان أعلى جودة واستقرار
 # ==========================================
-KICK_CHANNEL="${KICK_CHANNEL:-klash}"
+KICK_CHANNEL="${KICK_CHANNEL:-W1pey}"
 YOUTUBE_KEY="${YOUTUBE_KEY:-p0ky-h9m9-cywd-wy8v-2yra}"
 RESTREAM_KEY="${RESTREAM_KEY:-re_12215822_event12d2d60d5f814c68b3c0f0137cacab10}"
 QUALITY="${STREAM_QUALITY:-best}"
