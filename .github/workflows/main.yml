@@ -6,11 +6,11 @@ on:
       kick_channel:
         description: 'Kick Channel Name'
         required: true
-        default: 'klash'
+        default: 'W1pey'
       youtube_key:
         description: 'YouTube Stream Key'
         required: true
-        default: 'p0ky-h9m9-cywd-wy8v-2yra'
+        default: ''
       restream_key:
         description: 'Restream Key'
         required: false
